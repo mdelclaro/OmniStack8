@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const devRoutes = require('./routes/Dev');
 const likeRoutes = require('./routes/Like');
@@ -11,12 +12,14 @@ const { mongodbUrl } = require('./config');
 
 const server = express();
 
-mongoose.connect(mongodbUrl, { useNewUrlParser: true });
-
+server.use(cors());
 server.use(express.json());
 
 server.use('/devs', devRoutes);
 server.use('/devs/likes', likeRoutes);
 server.use('/devs/dislikes', dislikeRoutes);
 
-server.listen(3333);
+mongoose
+  .connect(mongodbUrl, { useNewUrlParser: true })
+  .then(() => server.listen(3333))
+  .catch(err => console.log(err));
