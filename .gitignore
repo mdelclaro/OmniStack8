@@ -2,8 +2,5 @@ node_modules
 yarn.lock
 .env
 
-front-end/*
-!front-end/.gitkeep
-
 mobile/*
 !mobile/.gitkeep
