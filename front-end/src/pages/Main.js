@@ -1,99 +1,50 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Main.css';
+
+import api from '../services/api';
 
 import logo from '../assets/logo.svg';
 import dislike from '../assets/dislike.svg';
 import like from '../assets/like.svg';
 
 function Main({ match }) {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    console.log('hasuhsa');
+    async function loadUsers() {
+      const response = await api.get('/devs', {
+        headers: { user: match.params.id }
+      });
+
+      setUsers(response.data);
+    }
+
+    loadUsers();
+  }, [match.params.id]);
+
   return (
     <div className="main-container">
       <img src={logo} alt="Tindev" />
       <ul>
-        <li>
-          <img src={logo} alt="" />
-          <footer>
-            <strong>Matheus Del Claro</strong>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Assumenda rerum quae inventore qui voluptatibus expedita eveniet,
-              dicta reprehenderit voluptatem error aut laborum id a perferendis
-              ipsum nulla odio quas porro.
-            </p>
-          </footer>
+        {users.map(user => (
+          <li key={user._id}>
+            <img src={user.avatar} alt={user.name} />
+            <footer>
+              <strong>{user.name}</strong>
+              <p>{user.bio}</p>
+            </footer>
 
-          <div className="buttons">
-            <button type="button">
-              <img src={dislike} alt="Dislike" />
-            </button>
-            <button type="button">
-              <img src={like} alt="Like" />
-            </button>
-          </div>
-        </li>
-        <li>
-          <img src={logo} alt="" />
-          <footer>
-            <strong>Matheus Del Claro</strong>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Assumenda rerum quae inventore qui voluptatibus expedita eveniet,
-              dicta reprehenderit voluptatem error aut laborum id a perferendis
-              ipsum nulla odio quas porro.
-            </p>
-          </footer>
-
-          <div className="buttons">
-            <button type="button">
-              <img src={dislike} alt="Dislike" />
-            </button>
-            <button type="button">
-              <img src={like} alt="Like" />
-            </button>
-          </div>
-        </li>
-        <li>
-          <img src={logo} alt="" />
-          <footer>
-            <strong>Matheus Del Claro</strong>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Assumenda rerum quae inventore qui voluptatibus expedita eveniet,
-              dicta reprehenderit voluptatem error aut laborum id a perferendis
-              ipsum nulla odio quas porro.
-            </p>
-          </footer>
-
-          <div className="buttons">
-            <button type="button">
-              <img src={dislike} alt="Dislike" />
-            </button>
-            <button type="button">
-              <img src={like} alt="Like" />
-            </button>
-          </div>
-        </li>
-        <li>
-          <img src={logo} alt="" />
-          <footer>
-            <strong>Matheus Del Claro</strong>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Assumenda rerum quae inventore qui voluptatibus expedita eveniet,
-              dicta reprehenderit voluptatem error aut laborum id a perferendis
-              ipsum nulla odio quas porro.
-            </p>
-          </footer>
-
-          <div className="buttons">
-            <button type="button">
-              <img src={dislike} alt="Dislike" />
-            </button>
-            <button type="button">
-              <img src={like} alt="Like" />
-            </button>
-          </div>
-        </li>
+            <div className="buttons">
+              <button type="button">
+                <img src={dislike} alt="Dislike" />
+              </button>
+              <button type="button">
+                <img src={like} alt="Like" />
+              </button>
+            </div>
+          </li>
+        ))}
       </ul>
     </div>
   );
