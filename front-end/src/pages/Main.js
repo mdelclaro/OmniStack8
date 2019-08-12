@@ -66,7 +66,7 @@ function Main({ match }) {
           ))}
         </ul>
       ) : (
-        <div className="empty">Acabou :(</div>
+        <div className="empty">No users left :(</div>
       )}
     </div>
   );
