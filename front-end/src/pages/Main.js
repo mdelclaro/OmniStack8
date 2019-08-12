@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import io from 'socket.io-client';
 import './Main.css';
 
 import api from '../services/api';
@@ -7,9 +8,11 @@ import api from '../services/api';
 import logo from '../assets/logo.svg';
 import dislike from '../assets/dislike.svg';
 import like from '../assets/like.svg';
+import matchLogo from '../assets/match.png';
 
 function Main({ match }) {
   const [users, setUsers] = useState([]);
+  const [matchDev, setMatchDev] = useState(null);
 
   useEffect(() => {
     async function loadUsers() {
@@ -21,6 +24,16 @@ function Main({ match }) {
     }
 
     loadUsers();
+  }, [match.params.id]);
+
+  useEffect(() => {
+    const socket = io('http://localhost:3333', {
+      query: { user: match.params.id }
+    });
+
+    socket.on('match', dev => {
+      setMatchDev(dev);
+    });
   }, [match.params.id]);
 
   async function handleLike(id) {
@@ -67,6 +80,19 @@ function Main({ match }) {
         </ul>
       ) : (
         <div className="empty">No users left :(</div>
+      )}
+
+      {matchDev && (
+        <div className="match-container">
+          <img src={matchLogo} alt="It's a match!" />
+          <img src={matchDev.avatar} className="avatar" alt="" />
+          <strong>{matchDev.name}</strong>
+          <p>{matchDev.bio}</p>
+
+          <button type="button" onClick={() => setMatchDev(false)}>
+            CLOSE
+          </button>
+        </div>
       )}
     </div>
   );

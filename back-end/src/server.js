@@ -10,14 +10,32 @@ require('dotenv-safe').config();
 
 const { mongodbUrl } = require('./config');
 
-const server = express();
+const app = express();
 
-server.use(cors());
-server.use(express.json());
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
-server.use('/devs', devRoutes);
-server.use('/devs/likes', likeRoutes);
-server.use('/devs/dislikes', dislikeRoutes);
+const connectedUsers = {};
+
+io.on('connection', socket => {
+  const { user } = socket.handshake.query;
+
+  connectedUsers[user] = socket.id;
+});
+
+app.use((req, _, next) => {
+  req.io = io;
+  req.connectedUsers = connectedUsers;
+
+  return next();
+});
+
+app.use(cors());
+app.use(express.json());
+
+app.use('/devs', devRoutes);
+app.use('/devs/likes', likeRoutes);
+app.use('/devs/dislikes', dislikeRoutes);
 
 mongoose
   .connect(mongodbUrl, { useNewUrlParser: true })
