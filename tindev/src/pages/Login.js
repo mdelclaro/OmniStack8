@@ -20,13 +20,14 @@ function Login({ navigation }) {
   useEffect(() => {
     AsyncStorage.getItem('user').then(user => {
       if (user) {
-        Navigator.navigate('Main', { user });
+        navigation.navigate('Main', { user });
       }
     });
   }, []);
 
   async function handleLogin() {
     const response = await api.post('/devs', { username: user });
+
     const { _id } = response.data;
 
     await AsyncStorage.setItem('user', _id);
